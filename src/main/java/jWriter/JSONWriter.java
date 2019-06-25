@@ -10,7 +10,7 @@ import com.google.gson.JsonParser;
 
 public class JSONWriter {
 
-	public static void writer(LinkedHashMap<String, LinkedHashMap<String, String>> x) {
+	public static void writer(LinkedHashMap<String, LinkedHashMap<String, String>> x, String fileName) {
 
 		Gson gson = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
 
@@ -22,7 +22,7 @@ public class JSONWriter {
 		
 		
 		 try{    
-	           FileWriter fw=new FileWriter("./locators.json");    
+	           FileWriter fw=new FileWriter("./"+fileName+".json");    
 	           fw.write(prettyJsonString);    
 	           fw.close();    
 	          }

@@ -15,6 +15,8 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import jWriter.JSONWriter;
+
 
 public class XPathGenerator {
 
@@ -47,7 +49,7 @@ public class XPathGenerator {
 		}
 	}
 
-	public static LinkedHashMap<String, LinkedHashMap<String, String>> generate() {
+	public static void generate() {
 
 		Instant start = Instant.now();
 
@@ -133,18 +135,18 @@ public class XPathGenerator {
 		Instant finish = Instant.now();
 
 		long timeElapsed = Duration.between(start, finish).getSeconds(); // in millis
-
 		
-
+		String cURL = wd.getCurrentUrl().split("/")[3];
+		
 		System.out.println("\n\nTotal XPath generated : " + xMap.values().stream().mapToInt(LinkedHashMap::size).sum()
 				+ " in " + timeElapsed + " seconds. ");
 
-//		System.out.println(json);
-		
 		wd.close();
 		
-		return xMap;
-
+		JSONWriter.writer(xMap,cURL);  // Writing to JSON file
+		
+		
+		
 	}
 
 	@SuppressWarnings("unchecked")
