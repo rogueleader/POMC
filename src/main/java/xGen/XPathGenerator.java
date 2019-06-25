@@ -71,28 +71,19 @@ public class XPathGenerator {
 																								// AUTOMATED
 
 		waitForPageLoaded(wd);
+		
+		System.out.println("\nPage Loaded... Generating XPath ");
 
 		List<WebElement> eList = wd.findElements(By.cssSelector("*"));
 
 		LinkedHashMap<String, LinkedHashMap<String, String>> xMap = new LinkedHashMap<String, LinkedHashMap<String, String>>();
 
-		System.out.println("__   _______     _______ _    _ \r\n" + "\\ \\ / /  __ \\ /\\|__   __| |  | |\r\n"
-				+ " \\ V /| |__) /  \\  | |  | |__| |\r\n" + "  > < |  ___/ /\\ \\ | |  |  __  |\r\n"
-				+ " / . \\| |  / ____ \\| |  | |  | |\r\n" + "/_/ \\_\\_| /_/    \\_\\_|  |_|  |_|\r\n"
-				+ "                                \r\n" + "                                \r\n"
-				+ "  _____ ______ _   _ ______ _____         _______ ____  _____  \r\n"
-				+ " / ____|  ____| \\ | |  ____|  __ \\     /\\|__   __/ __ \\|  __ \\ \r\n"
-				+ "| |  __| |__  |  \\| | |__  | |__) |   /  \\  | | | |  | | |__) |\r\n"
-				+ "| | |_ |  __| | . ` |  __| |  _  /   / /\\ \\ | | | |  | |  _  / \r\n"
-				+ "| |__| | |____| |\\  | |____| | \\ \\  / ____ \\| | | |__| | | \\ \\ \r\n"
-				+ " \\_____|______|_| \\_|______|_|  \\_\\/_/    \\_\\_|  \\____/|_|  \\_\\\r\n"
-				+ "                                                               ");
+		
 
 		// Limiting the generation for selected tags - 'INPUT', 'BUTTON', 'SELECT',
 		// 'TEXTAREA' ---- REMOVED 'A'
 
 		for (WebElement e : eList) {
-			System.out.print(".");
 			if (Stream.of("INPUT", "BUTTON", "SELECT", "TEXTAREA").anyMatch(e.getTagName()::equalsIgnoreCase)) {
 				if (e.getTagName().equalsIgnoreCase("input") && e.getAttribute("type").equalsIgnoreCase("checkbox")
 						&& e.getAttribute("id").equals(""))
@@ -127,8 +118,6 @@ public class XPathGenerator {
 			}
 		}
 
-		System.out.println("\n\n");
-
 //		xMap.forEach((k, v) -> System.out.println(k + "     " + v));
 		// Map not allowing duplicate values as keys so skipping tags
 
@@ -138,8 +127,8 @@ public class XPathGenerator {
 		
 		String cURL = wd.getCurrentUrl().split("/")[3];
 		
-		System.out.println("\n\nTotal XPath generated : " + xMap.values().stream().mapToInt(LinkedHashMap::size).sum()
-				+ " in " + timeElapsed + " seconds. ");
+		System.out.println("\nTotal XPath generated : " + xMap.values().stream().mapToInt(LinkedHashMap::size).sum()
+				+ " in " + timeElapsed + " seconds.\n ");
 
 		wd.close();
 		
