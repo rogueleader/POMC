@@ -1,6 +1,5 @@
 package xGen;
 
-
 import java.time.Duration;
 import java.time.Instant;
 import java.util.LinkedHashMap;
@@ -16,155 +15,143 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+
 public class XPathGenerator {
-	
+
 	static {
-	System.setProperty("webdriver.chrome.driver","D:\\chromedriver.exe");
+		System.setProperty("webdriver.chrome.driver", "D:\\chromedriver.exe");
 	}
-	
+
 	static WebDriver wd = new ChromeDriver();
-	
+
 	public static void waitForPageLoaded(WebDriver webDriver) {
-	    ExpectedCondition<Boolean> expectation = new
-	            ExpectedCondition<Boolean>() {
-	                public Boolean apply(WebDriver driver) {
-	                    return ((JavascriptExecutor) driver).executeAsyncScript(
-	                        "var callback = arguments[arguments.length - 1];" +
-	                        "if (document.readyState !== 'complete') {" +
-	                        "  callback('document not ready');" +
-	                        "} else {" +
-	                        "  try {" +
-	                        "    var testabilities = window.getAllAngularTestabilities();" +
-	                        "    var count = testabilities.length;" +
-	                        "    var decrement = function() {" +
-	                        "      count--;" +
-	                        "      if (count === 0) {" +
-	                        "        callback('complete');" +
-	                        "      }" +
-	                        "    };" +
-	                        "    testabilities.forEach(function(testability) {" +
-	                        "      testability.whenStable(decrement);" +
-	                        "    });" +
-	                        "  } catch (err) {" +
-	                        "    callback(err.message);" +
-	                        "  }" +
-	                        "}"
-	                    ).toString().equals("complete");
-	                }
-	            };
-	    try {
-	        WebDriverWait wait = new WebDriverWait(webDriver, 10);
-	        wait.until(expectation);
-	    } catch (Throwable error) {
-	        new Exception("Timeout waiting for Page Load Request to complete.");
-	    }
-	} 
-	
-	
-	public static void generate()
-	{
-		
+		ExpectedCondition<Boolean> expectation = new ExpectedCondition<Boolean>() {
+			public Boolean apply(WebDriver driver) {
+				return ((JavascriptExecutor) driver).executeAsyncScript(
+						"var callback = arguments[arguments.length - 1];" + "if (document.readyState !== 'complete') {"
+								+ "  callback('document not ready');" + "} else {" + "  try {"
+								+ "    var testabilities = window.getAllAngularTestabilities();"
+								+ "    var count = testabilities.length;" + "    var decrement = function() {"
+								+ "      count--;" + "      if (count === 0) {" + "        callback('complete');"
+								+ "      }" + "    };" + "    testabilities.forEach(function(testability) {"
+								+ "      testability.whenStable(decrement);" + "    });" + "  } catch (err) {"
+								+ "    callback(err.message);" + "  }" + "}")
+						.toString().equals("complete");
+			}
+		};
+		try {
+			WebDriverWait wait = new WebDriverWait(webDriver, 10);
+			wait.until(expectation);
+		} catch (Throwable error) {
+			new Exception("Timeout waiting for Page Load Request to complete.");
+		}
+	}
+
+	public static LinkedHashMap<String, LinkedHashMap<String, String>> generate() {
+
 		Instant start = Instant.now();
-		
-		String URL = "http://192.168.172.20/main";  // "http://www.google.com"
-		
+
+		String URL = "http://192.168.172.20/main"; // "http://www.google.com"
+
 		wd.manage().window().maximize();
-		
-		wd.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);  // IMplicit Wait by using timeouts() on webdriver
-		
+
+		wd.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS); // IMplicit Wait by using timeouts() on webdriver
+
 		wd.get(URL);
-		
+
 		waitForPageLoaded(wd);
-		
-		
-		// 2 CLICKS TO REACH A MENU 
-		
+
+		// 2 CLICKS TO REACH A MENU
+
 		wd.findElement(By.xpath("//*[@id=\'first-level\']/div[2]/div[2]/a")).click();
-		
-		wd.findElement(By.xpath("//div[@id='second-level']//div[2]//div[1]//a[1]")).click(); // THIS IS THE MENU TO BE AUTOMATED
-		 
+
+		wd.findElement(By.xpath("//div[@id='second-level']//div[2]//div[1]//a[1]")).click(); // THIS IS THE MENU TO BE
+																								// AUTOMATED
+
 		waitForPageLoaded(wd);
-			
+
 		List<WebElement> eList = wd.findElements(By.cssSelector("*"));
 
-		LinkedHashMap<String,LinkedHashMap<String,String>> xMap = new LinkedHashMap<String,LinkedHashMap<String,String>>();
-		
+		LinkedHashMap<String, LinkedHashMap<String, String>> xMap = new LinkedHashMap<String, LinkedHashMap<String, String>>();
 
+		System.out.println("__   _______     _______ _    _ \r\n" + "\\ \\ / /  __ \\ /\\|__   __| |  | |\r\n"
+				+ " \\ V /| |__) /  \\  | |  | |__| |\r\n" + "  > < |  ___/ /\\ \\ | |  |  __  |\r\n"
+				+ " / . \\| |  / ____ \\| |  | |  | |\r\n" + "/_/ \\_\\_| /_/    \\_\\_|  |_|  |_|\r\n"
+				+ "                                \r\n" + "                                \r\n"
+				+ "  _____ ______ _   _ ______ _____         _______ ____  _____  \r\n"
+				+ " / ____|  ____| \\ | |  ____|  __ \\     /\\|__   __/ __ \\|  __ \\ \r\n"
+				+ "| |  __| |__  |  \\| | |__  | |__) |   /  \\  | | | |  | | |__) |\r\n"
+				+ "| | |_ |  __| | . ` |  __| |  _  /   / /\\ \\ | | | |  | |  _  / \r\n"
+				+ "| |__| | |____| |\\  | |____| | \\ \\  / ____ \\| | | |__| | | \\ \\ \r\n"
+				+ " \\_____|______|_| \\_|______|_|  \\_\\/_/    \\_\\_|  \\____/|_|  \\_\\\r\n"
+				+ "                                                               ");
 
-		System.out.println("__   _______     _______ _    _ \r\n" + 
-				"\\ \\ / /  __ \\ /\\|__   __| |  | |\r\n" + 
-				" \\ V /| |__) /  \\  | |  | |__| |\r\n" + 
-				"  > < |  ___/ /\\ \\ | |  |  __  |\r\n" + 
-				" / . \\| |  / ____ \\| |  | |  | |\r\n" + 
-				"/_/ \\_\\_| /_/    \\_\\_|  |_|  |_|\r\n" + 
-				"                                \r\n" + 
-				"                                \r\n" + 
-				"  _____ ______ _   _ ______ _____         _______ ____  _____  \r\n" + 
-				" / ____|  ____| \\ | |  ____|  __ \\     /\\|__   __/ __ \\|  __ \\ \r\n" + 
-				"| |  __| |__  |  \\| | |__  | |__) |   /  \\  | | | |  | | |__) |\r\n" + 
-				"| | |_ |  __| | . ` |  __| |  _  /   / /\\ \\ | | | |  | |  _  / \r\n" + 
-				"| |__| | |____| |\\  | |____| | \\ \\  / ____ \\| | | |__| | | \\ \\ \r\n" + 
-				" \\_____|______|_| \\_|______|_|  \\_\\/_/    \\_\\_|  \\____/|_|  \\_\\\r\n" + 
-				"                                                               ");
-		
-		// Limiting the generation for selected tags - 'INPUT', 'BUTTON', 'SELECT', 'TEXTAREA' ---- REMOVED 'A' 
-		
+		// Limiting the generation for selected tags - 'INPUT', 'BUTTON', 'SELECT',
+		// 'TEXTAREA' ---- REMOVED 'A'
+
 		for (WebElement e : eList) {
 			System.out.print(".");
-			if(Stream.of("INPUT", "BUTTON", "SELECT", "TEXTAREA").anyMatch(e.getTagName()::equalsIgnoreCase))
-			{	if(e.getTagName().equalsIgnoreCase("input")&&e.getAttribute("type").equalsIgnoreCase("checkbox")&&e.getAttribute("id").equals(""))
+			if (Stream.of("INPUT", "BUTTON", "SELECT", "TEXTAREA").anyMatch(e.getTagName()::equalsIgnoreCase)) {
+				if (e.getTagName().equalsIgnoreCase("input") && e.getAttribute("type").equalsIgnoreCase("checkbox")
+						&& e.getAttribute("id").equals(""))
 					continue;
-				else
-				{
+				else {
 					String n = e.getAttribute("name");
-					
+
 					String id = e.getAttribute("id");
-					
+
 					String l = e.getAttribute("label");
-					
-					// Adding filter for ID > NAME > LABEL 
-					
-					if((n!=null&&!n.equals(""))||(id!=null&&!id.equals(""))||(l!=null&&!l.equals("")))
-					{
+
+					// Adding filter for ID > NAME > LABEL
+
+					if ((n != null && !n.equals("")) || (id != null && !id.equals(""))
+							|| (l != null && !l.equals(""))) {
 						String x = generateXpath(e);
-						
-						if(e.getAttribute("type").equalsIgnoreCase("checkbox"))
-						{
-							x=x.split("tbody\\[1\\]")[1].split("\\/div\\[1\\]")[0].replaceAll("/", "//");
+
+						if (e.getAttribute("type").equalsIgnoreCase("checkbox")) {
+							x = x.split("tbody\\[1\\]")[1].split("\\/div\\[1\\]")[0].replaceAll("/", "//");
 						}
-						if(xMap.containsKey(e.getTagName()))
-							xMap.get(e.getTagName()).put(((id!=null&&!id.equals(""))?id:(n!=null&&!n.equals(""))?n:l), x);
-						else
-							{
-								xMap.put(e.getTagName(), new LinkedHashMap<String, String>());
-								xMap.get(e.getTagName()).put(((id!=null&&!id.equals(""))?id:(n!=null&&!n.equals(""))?n:l), x);
-							}
-						
+						if (xMap.containsKey(e.getTagName()))
+							xMap.get(e.getTagName()).put(
+									((id != null && !id.equals("")) ? id : (n != null && !n.equals("")) ? n : l), x);
+						else {
+							xMap.put(e.getTagName(), new LinkedHashMap<String, String>());
+							xMap.get(e.getTagName()).put(
+									((id != null && !id.equals("")) ? id : (n != null && !n.equals("")) ? n : l), x);
+						}
+
 					}
 				}
 			}
 		}
-		
+
 		System.out.println("\n\n");
-		
-		xMap.forEach((k, v) -> System.out.println(k + "     " + v));
+
+//		xMap.forEach((k, v) -> System.out.println(k + "     " + v));
 		// Map not allowing duplicate values as keys so skipping tags
-		
+
 		Instant finish = Instant.now();
-		 
-	    long timeElapsed = Duration.between(start, finish).getSeconds();  //in millis
-	    
-		System.out.println("\n\nTotal XPath generated : "+xMap.values().stream().mapToInt(LinkedHashMap::size).sum()+" in "+timeElapsed+" seconds. ");
+
+		long timeElapsed = Duration.between(start, finish).getSeconds(); // in millis
+
 		
+
+		System.out.println("\n\nTotal XPath generated : " + xMap.values().stream().mapToInt(LinkedHashMap::size).sum()
+				+ " in " + timeElapsed + " seconds. ");
+
+//		System.out.println(json);
 		
 		wd.close();
-			
+		
+		return xMap;
+
 	}
 
 	@SuppressWarnings("unchecked")
 	public static String generateXpath(WebElement e) {
 
-		if (e.getAttribute("id") != null && !e.getAttribute("id").equals("")&&!e.getAttribute("id").contains("Checkbox"))
+		if (e.getAttribute("id") != null && !e.getAttribute("id").equals("")
+				&& !e.getAttribute("id").contains("Checkbox"))
 			return "//" + e.getTagName() + "[@id='" + e.getAttribute("id") + "']";
 		if (e.getTagName().equals("html"))
 			return "/html[1]";
@@ -174,14 +161,13 @@ public class XPathGenerator {
 		List<WebElement> siblings = (List<WebElement>) ((JavascriptExecutor) wd)
 				.executeScript("return arguments[0].parentNode.childNodes;", e);
 
-		WebElement parent = (WebElement) ((JavascriptExecutor) wd).executeScript("return arguments[0].parentNode;",
-				e);
+		WebElement parent = (WebElement) ((JavascriptExecutor) wd).executeScript("return arguments[0].parentNode;", e);
 
 		for (int i = 0; i < siblings.size(); i++) {
 
 			WebElement sibling = null;
 
-			if ( siblings.get(i) instanceof WebElement) {
+			if (siblings.get(i) instanceof WebElement) {
 				sibling = siblings.get(i);
 
 				Long nodeType = (Long) ((JavascriptExecutor) wd).executeScript("return arguments[0].nodeType;",
@@ -201,18 +187,15 @@ public class XPathGenerator {
 	}
 }
 
-
 /*
  * 
- * 	 This piece of code will print the entire DOM to console
-
-String javascript = "return arguments[0].innerHTML";
-String pageSource=(String)((JavascriptExecutor)wd)
-    .executeScript(javascript, wd.findElement(By.tagName("html")));
-pageSource = "<html>"+pageSource +"</html>";
-System.out.println(pageSource);
-
-
-
+ * This piece of code will print the entire DOM to console
+ * 
+ * String javascript = "return arguments[0].innerHTML"; String
+ * pageSource=(String)((JavascriptExecutor)wd) .executeScript(javascript,
+ * wd.findElement(By.tagName("html"))); pageSource = "<html>"+pageSource
+ * +"</html>"; System.out.println(pageSource);
+ * 
+ * 
+ * 
  */
-	
