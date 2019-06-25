@@ -1,7 +1,9 @@
 package xGen;
 
 
-import java.util.HashMap;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
@@ -61,6 +63,9 @@ public class XPathGenerator {
 	
 	public static void generate()
 	{
+		
+		Instant start = Instant.now();
+		
 		String URL = "http://192.168.172.20/main";  // "http://www.google.com"
 		
 		wd.manage().window().maximize();
@@ -76,13 +81,15 @@ public class XPathGenerator {
 		
 		wd.findElement(By.xpath("//*[@id=\'first-level\']/div[2]/div[2]/a")).click();
 		
-		wd.findElement(By.xpath("//*[@id=\'second-level\']/div[2]/div[1]/a")).click(); // THIS IS THE MENU TO BE AUTMOATED
+		wd.findElement(By.xpath("//div[@id='second-level']//div[2]//div[1]//a[1]")).click(); // THIS IS THE MENU TO BE AUTOMATED
 		 
 		waitForPageLoaded(wd);
 			
 		List<WebElement> eList = wd.findElements(By.cssSelector("*"));
 
-		HashMap<String, String> xMap = new HashMap<String, String>();
+		LinkedHashMap<String,LinkedHashMap<String,String>> xMap = new LinkedHashMap<String,LinkedHashMap<String,String>>();
+		
+
 
 		System.out.println("__   _______     _______ _    _ \r\n" + 
 				"\\ \\ / /  __ \\ /\\|__   __| |  | |\r\n" + 
@@ -100,16 +107,42 @@ public class XPathGenerator {
 				" \\_____|______|_| \\_|______|_|  \\_\\/_/    \\_\\_|  \\____/|_|  \\_\\\r\n" + 
 				"                                                               ");
 		
-		int i=0;
-		
-		
-		// Limiting the generation for selected tags - 'INPUT', 'BUTTON', 'SELECT', 'TEXTAREA' , 'A' 
+		// Limiting the generation for selected tags - 'INPUT', 'BUTTON', 'SELECT', 'TEXTAREA' ---- REMOVED 'A' 
 		
 		for (WebElement e : eList) {
 			System.out.print(".");
-			if(Stream.of("INPUT", "BUTTON", "SELECT", "TEXTAREA", "A").anyMatch(e.getTagName()::equalsIgnoreCase))
-				xMap.put("Element#" + i +" " + e.getTagName() + " "+ (!e.getAttribute("name").equals("")?e.getAttribute("name"):e.getAttribute("id")), generateXpath(e));
-			i++;
+			if(Stream.of("INPUT", "BUTTON", "SELECT", "TEXTAREA").anyMatch(e.getTagName()::equalsIgnoreCase))
+			{	if(e.getTagName().equalsIgnoreCase("input")&&e.getAttribute("type").equalsIgnoreCase("checkbox")&&e.getAttribute("id").equals(""))
+					continue;
+				else
+				{
+					String n = e.getAttribute("name");
+					
+					String id = e.getAttribute("id");
+					
+					String l = e.getAttribute("label");
+					
+					// Adding filter for ID > NAME > LABEL 
+					
+					if((n!=null&&!n.equals(""))||(id!=null&&!id.equals(""))||(l!=null&&!l.equals("")))
+					{
+						String x = generateXpath(e);
+						
+						if(e.getAttribute("type").equalsIgnoreCase("checkbox"))
+						{
+							x=x.split("tbody\\[1\\]")[1].split("\\/div\\[1\\]")[0].replaceAll("/", "//");
+						}
+						if(xMap.containsKey(e.getTagName()))
+							xMap.get(e.getTagName()).put(((id!=null&&!id.equals(""))?id:(n!=null&&!n.equals(""))?n:l), x);
+						else
+							{
+								xMap.put(e.getTagName(), new LinkedHashMap<String, String>());
+								xMap.get(e.getTagName()).put(((id!=null&&!id.equals(""))?id:(n!=null&&!n.equals(""))?n:l), x);
+							}
+						
+					}
+				}
+			}
 		}
 		
 		System.out.println("\n\n");
@@ -117,7 +150,11 @@ public class XPathGenerator {
 		xMap.forEach((k, v) -> System.out.println(k + "     " + v));
 		// Map not allowing duplicate values as keys so skipping tags
 		
-		System.out.println("\n\nTotal XPath generated : "+xMap.keySet().size());
+		Instant finish = Instant.now();
+		 
+	    long timeElapsed = Duration.between(start, finish).getSeconds();  //in millis
+	    
+		System.out.println("\n\nTotal XPath generated : "+xMap.values().stream().mapToInt(LinkedHashMap::size).sum()+" in "+timeElapsed+" seconds. ");
 		
 		
 		wd.close();
@@ -127,7 +164,7 @@ public class XPathGenerator {
 	@SuppressWarnings("unchecked")
 	public static String generateXpath(WebElement e) {
 
-		if (e.getAttribute("id") != null && !e.getAttribute("id").equals(""))
+		if (e.getAttribute("id") != null && !e.getAttribute("id").equals("")&&!e.getAttribute("id").contains("Checkbox"))
 			return "//" + e.getTagName() + "[@id='" + e.getAttribute("id") + "']";
 		if (e.getTagName().equals("html"))
 			return "/html[1]";
