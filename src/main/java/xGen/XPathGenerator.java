@@ -148,7 +148,7 @@ public class XPathGenerator {
 		
 		String wdcURL = wd.getCurrentUrl();
 		
-		if(wdcURL.length() - wdcURL.replaceAll("g","").length()>=3)
+		if(wdcURL.length() - wdcURL.replaceAll("/","").length()>=3)
 			 cURL = wdcURL.split("/")[3];
 
 		System.out.println("\nTotal XPath generated : " + xMap.values().stream().mapToInt(LinkedHashMap::size).sum()

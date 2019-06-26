@@ -32,7 +32,7 @@ public class JSONWriter {
 	          }
 		 
 		 catch(Exception e){System.out.println(e);}    
-	          System.out.println("JSON file created ! "+ fileName +".json");    
+	          System.out.println("JSON file created - "+ fileName +".json");    
 	     }    
 
 	}
