@@ -21,14 +21,18 @@ public class JSONWriter {
 		String prettyJsonString = gson.toJson(je);
 		
 		
+		
 		 try{    
+			   if(fileName!=null||!fileName.equals(""))
+				   fileName = fileName.replaceAll("[^\\w\\s]","");
+			   
 	           FileWriter fw=new FileWriter("./"+fileName+".json");    
 	           fw.write(prettyJsonString);    
 	           fw.close();    
 	          }
 		 
 		 catch(Exception e){System.out.println(e);}    
-	          System.out.println("JSON file created !");    
+	          System.out.println("JSON file created ! "+ fileName +".json");    
 	     }    
 
 	}

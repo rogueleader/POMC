@@ -2,6 +2,8 @@ package xGen;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -17,12 +19,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import jWriter.JSONWriter;
 
-
 public class XPathGenerator {
-
-	static {
-		System.setProperty("webdriver.chrome.driver", "D:\\chromedriver.exe");
-	}
 
 	static WebDriver wd = new ChromeDriver();
 
@@ -49,11 +46,17 @@ public class XPathGenerator {
 		}
 	}
 
-	public static void generate() {
+	public static void generate(String URL, ArrayList<String> nav) {
+
+		System.out.println("______ ________  ___  _____ ______ _____  ___ _____ ___________ \r\n"
+				+ "| ___ \\  _  |  \\/  | /  __ \\| ___ \\  ___|/ _ \\_   _|  _  | ___ \\\r\n"
+				+ "| |_/ / | | | .  . | | /  \\/| |_/ / |__ / /_\\ \\| | | | | | |_/ /\r\n"
+				+ "|  __/| | | | |\\/| | | |    |    /|  __||  _  || | | | | |    / \r\n"
+				+ "| |   \\ \\_/ / |  | | | \\__/\\| |\\ \\| |___| | | || | \\ \\_/ / |\\ \\ \r\n"
+				+ "\\_|    \\___/\\_|  |_/  \\____/\\_| \\_\\____/\\_| |_/\\_/  \\___/\\_| \\_|\r\n"
+				+ "                                                                ");
 
 		Instant start = Instant.now();
-
-		String URL = "http://192.168.172.20/main"; // "http://www.google.com"
 
 		wd.manage().window().maximize();
 
@@ -63,22 +66,26 @@ public class XPathGenerator {
 
 		waitForPageLoaded(wd);
 
-		// 2 CLICKS TO REACH A MENU
+		Iterator<String> it = nav.iterator();
 
-		wd.findElement(By.xpath("//*[@id=\'first-level\']/div[2]/div[2]/a")).click();
+		if (it.hasNext()) {
+			while (it.hasNext()) {
+				String ix = (String) it.next();
 
-		wd.findElement(By.xpath("//div[@id='second-level']//div[2]//div[1]//a[1]")).click(); // THIS IS THE MENU TO BE
-																								// AUTOMATED
+				if (ix != null && !ix.equals(""))
+					wd.findElement(By.xpath(ix)).click();
+
+			}
+
+		}
 
 		waitForPageLoaded(wd);
-		
-		System.out.println("\nPage Loaded... Generating XPath ");
+
+		System.out.println("\nPage Loaded... Generating XPath for "+wd.getCurrentUrl());
 
 		List<WebElement> eList = wd.findElements(By.cssSelector("*"));
 
 		LinkedHashMap<String, LinkedHashMap<String, String>> xMap = new LinkedHashMap<String, LinkedHashMap<String, String>>();
-
-		
 
 		// Limiting the generation for selected tags - 'INPUT', 'BUTTON', 'SELECT',
 		// 'TEXTAREA' ---- REMOVED 'A'
@@ -101,10 +108,22 @@ public class XPathGenerator {
 							|| (l != null && !l.equals(""))) {
 						String x = generateXpath(e);
 
+						
 						if (e.getAttribute("type").equalsIgnoreCase("checkbox")) {
 							x = x.split("tbody\\[1\\]")[1].split("\\/div\\[1\\]")[0].replaceAll("/", "//");
 						}
-						if (xMap.containsKey(e.getTagName()))
+						if(e.getTagName().equalsIgnoreCase("input")&&e.getAttribute("type")!=null&&e.getAttribute("type").equalsIgnoreCase("submit"))
+						{
+							if (xMap.containsKey("button"))
+								xMap.get("button").put(
+										((id != null && !id.equals("")) ? id : (n != null && !n.equals("")) ? n : l), x);
+							else {
+								xMap.put("button", new LinkedHashMap<String, String>());
+								xMap.get("button").put(
+										((id != null && !id.equals("")) ? id : (n != null && !n.equals("")) ? n : l), x);
+							}
+						}
+						else if (xMap.containsKey(e.getTagName()))
 							xMap.get(e.getTagName()).put(
 									((id != null && !id.equals("")) ? id : (n != null && !n.equals("")) ? n : l), x);
 						else {
@@ -124,18 +143,21 @@ public class XPathGenerator {
 		Instant finish = Instant.now();
 
 		long timeElapsed = Duration.between(start, finish).getSeconds(); // in millis
+
+		String cURL = "locators";
 		
-		String cURL = wd.getCurrentUrl().split("/")[3];
+		String wdcURL = wd.getCurrentUrl();
 		
+		if(wdcURL.length() - wdcURL.replaceAll("g","").length()>=3)
+			 cURL = wdcURL.split("/")[3];
+
 		System.out.println("\nTotal XPath generated : " + xMap.values().stream().mapToInt(LinkedHashMap::size).sum()
 				+ " in " + timeElapsed + " seconds.\n ");
 
 		wd.close();
-		
-		JSONWriter.writer(xMap,cURL);  // Writing to JSON file
-		
-		
-		
+
+		JSONWriter.writer(xMap, cURL); // Writing to JSON file
+
 	}
 
 	@SuppressWarnings("unchecked")
