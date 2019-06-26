@@ -72,7 +72,9 @@ public class POMCreator {
 		for (Map.Entry<String, JsonElement> entry : entries) {
 			
 			String strFun ="\n	public async clickAt" + entry.getKey() + "Button() \n    {";
-			strFun += "\n       await element(by.xpath(" + entry.getValue() + ")).click(); \n";
+			//here use json file get locator
+			//strFun += "\n       await element(by.xpath(" + entry.getValue() + ")).click(); \n";
+			strFun += "\n       await element(by.xpath(elem.button." +entry.getKey() + ")).click(); \n";
 			strFun += "    }\n";
 
 			sb.append(strFun);
