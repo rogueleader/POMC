@@ -8,7 +8,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
-
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
@@ -157,6 +156,9 @@ public class XPathGenerator {
 		wd.close();
 
 		JSONWriter.writer(xMap, cURL); // Writing to JSON file
+		
+		
+		
 
 	}
 

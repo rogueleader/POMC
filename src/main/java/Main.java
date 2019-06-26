@@ -3,7 +3,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Properties;
-
 import xGen.XPathGenerator;
 
 public class Main {
@@ -46,6 +45,8 @@ public class Main {
 		System.setProperty("webdriver.chrome.driver", DRIVER_PATH);
 
 		XPathGenerator.generate(URL, nav); // will be later seeded with URL
+		
+		
 
 	}
 

@@ -1,0 +1,20 @@
+import { browser, ElementFinder, element, by, protractor } from "protractor";
+import { expect } from "chai";
+
+let EC = protractor.ExpectedConditions;
+let elem = require('./$fileName$.json');
+
+
+
+export class $ClassName$ {
+
+
+	    constructor() {
+	
+	        browser.manage().timeouts().implicitlyWait(2000);
+	        browser.manage().timeouts().pageLoadTimeout(5000);
+	    }
+    
+    $buttonFunction$
+   
+}
