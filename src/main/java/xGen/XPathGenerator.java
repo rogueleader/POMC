@@ -45,7 +45,7 @@ public class XPathGenerator {
 		}
 	}
 
-	public static void generate(String URL, ArrayList<String> nav) {
+	public static void generate(String URL, ArrayList<String> nav) throws InterruptedException {
 
 		System.out.println("______ ________  ___  _____ ______ _____  ___ _____ ___________ \r\n"
 				+ "| ___ \\  _  |  \\/  | /  __ \\| ___ \\  ___|/ _ \\_   _|  _  | ___ \\\r\n"
@@ -72,6 +72,7 @@ public class XPathGenerator {
 					String ix = (String) it.next();
 					if (ix != null && !ix.equals(""))
 						wd.findElement(By.xpath(ix)).click();
+					Thread.sleep(5000);
 				}
 
 			}
@@ -88,7 +89,17 @@ public class XPathGenerator {
 		// 'TEXTAREA' ---- REMOVED 'A'
 
 		for (WebElement e : eList) {
-			if (Stream.of("INPUT", "BUTTON", "SELECT", "TEXTAREA").anyMatch(e.getTagName()::equalsIgnoreCase)) {
+
+			String t = null;
+			try {
+				t = e.getTagName();
+			} catch (org.openqa.selenium.StaleElementReferenceException ex) {
+				t = e.getTagName();
+			} catch (Exception ex) {
+				System.out.println("Please run the application again. Report this incident to dev.");
+			}
+
+			if (Stream.of("INPUT", "BUTTON", "SELECT", "TEXTAREA").anyMatch(t::equalsIgnoreCase)) {
 				if (e.getTagName().equalsIgnoreCase("input") && e.getAttribute("type").equalsIgnoreCase("checkbox")
 						&& e.getAttribute("id").equals(""))
 					continue;
@@ -156,13 +167,12 @@ public class XPathGenerator {
 
 		wd.close();
 
-		if(ctr==0)
-		{
+		if (ctr == 0) {
 			System.out.println("No Locators found for the specified tags.");
 			return;
 		}
-		
-			JSONWriter.writer(xMap, cURL); // Writing to JSON file
+
+		JSONWriter.writer(xMap, cURL); // Writing to JSON file
 
 	}
 

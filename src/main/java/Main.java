@@ -7,7 +7,7 @@ import xGen.XPathGenerator;
 
 public class Main {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws InterruptedException {
 		
 		 String DRIVER_PATH = null;
 		 String URL = null;
