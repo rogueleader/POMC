@@ -65,22 +65,20 @@ public class XPathGenerator {
 
 		waitForPageLoaded(wd);
 
-		Iterator<String> it = nav.iterator();
-
-		if (it.hasNext()) {
-			while (it.hasNext()) {
-				String ix = (String) it.next();
-
-				if (ix != null && !ix.equals(""))
-					wd.findElement(By.xpath(ix)).click();
+		if (nav != null) {
+			Iterator<String> it = nav.iterator();
+			if (it.hasNext()) {
+				while (it.hasNext()) {
+					String ix = (String) it.next();
+					if (ix != null && !ix.equals(""))
+						wd.findElement(By.xpath(ix)).click();
+				}
 
 			}
-
+			waitForPageLoaded(wd);
 		}
 
-		waitForPageLoaded(wd);
-
-		System.out.println("\nPage Loaded... Generating XPath for "+wd.getCurrentUrl());
+		System.out.println("\nPage Loaded... Generating XPath for " + wd.getCurrentUrl());
 
 		List<WebElement> eList = wd.findElements(By.cssSelector("*"));
 
@@ -107,22 +105,22 @@ public class XPathGenerator {
 							|| (l != null && !l.equals(""))) {
 						String x = generateXpath(e);
 
-						
 						if (e.getAttribute("type").equalsIgnoreCase("checkbox")) {
 							x = x.split("tbody\\[1\\]")[1].split("\\/div\\[1\\]")[0].replaceAll("/", "//");
 						}
-						if(e.getTagName().equalsIgnoreCase("input")&&e.getAttribute("type")!=null&&e.getAttribute("type").equalsIgnoreCase("submit"))
-						{
+						if (e.getTagName().equalsIgnoreCase("input") && e.getAttribute("type") != null
+								&& e.getAttribute("type").equalsIgnoreCase("submit")) {
 							if (xMap.containsKey("button"))
 								xMap.get("button").put(
-										((id != null && !id.equals("")) ? id : (n != null && !n.equals("")) ? n : l), x);
+										((id != null && !id.equals("")) ? id : (n != null && !n.equals("")) ? n : l),
+										x);
 							else {
 								xMap.put("button", new LinkedHashMap<String, String>());
 								xMap.get("button").put(
-										((id != null && !id.equals("")) ? id : (n != null && !n.equals("")) ? n : l), x);
+										((id != null && !id.equals("")) ? id : (n != null && !n.equals("")) ? n : l),
+										x);
 							}
-						}
-						else if (xMap.containsKey(e.getTagName()))
+						} else if (xMap.containsKey(e.getTagName()))
 							xMap.get(e.getTagName()).put(
 									((id != null && !id.equals("")) ? id : (n != null && !n.equals("")) ? n : l), x);
 						else {
@@ -144,21 +142,27 @@ public class XPathGenerator {
 		long timeElapsed = Duration.between(start, finish).getSeconds(); // in millis
 
 		String cURL = "locators";
-		
-		String wdcURL = wd.getCurrentUrl();
-		
-		if(wdcURL.length() - wdcURL.replaceAll("/","").length()>=3)
-			 cURL = wdcURL.split("/")[3];
 
-		System.out.println("\nTotal XPath generated : " + xMap.values().stream().mapToInt(LinkedHashMap::size).sum()
-				+ " in " + timeElapsed + " seconds.\n ");
+		String wdcURL = wd.getCurrentUrl();
+
+		if (wdcURL.length() - wdcURL.replaceAll("/", "").length() >= 3 && wdcURL.split("/").length >= 4) {
+
+			cURL = wdcURL.split("/")[3];
+		}
+
+		int ctr = xMap.values().stream().mapToInt(LinkedHashMap::size).sum();
+
+		System.out.println("\nTotal XPath generated : " + ctr + " in " + timeElapsed + " seconds.\n ");
 
 		wd.close();
 
-		JSONWriter.writer(xMap, cURL); // Writing to JSON file
+		if(ctr==0)
+		{
+			System.out.println("No Locators found for the specified tags.");
+			return;
+		}
 		
-		
-		
+			JSONWriter.writer(xMap, cURL); // Writing to JSON file
 
 	}
 

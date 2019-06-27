@@ -38,9 +38,11 @@ public class Main {
             ex.printStackTrace();
         }
 		
+		ArrayList<String> nav = null ;
 		
 		// Give one or more items to click to reach a page ( if any )
-		ArrayList<String> nav = new ArrayList<String>(Arrays.asList(NAV.split(",")));
+		if(NAV.contains(","))
+			nav = new ArrayList<String>(Arrays.asList(NAV.split(",")));
 				
 		System.setProperty("webdriver.chrome.driver", DRIVER_PATH);
 
